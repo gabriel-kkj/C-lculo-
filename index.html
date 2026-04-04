@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>FinSmart Pro+</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+    }
+    .container {
+      max-width: 420px;
+      margin: 30px auto;
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    h2 { text-align: center; }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #00c9a7;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover { background: #00a78e; }
+    .resultado { margin-top: 15px; }
+    .dica { font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body><div class="container">
+  <h2>💰 FinSmart Pro+</h2>
+  <p style="text-align:center;">Controle detalhado de gastos</p>  <input type="number" id="salario" placeholder="Seu salário (R$)">  <h4>💸 Gastos Mensais</h4>
+  <input type="number" id="aluguel" placeholder="Aluguel">
+  <input type="number" id="agua" placeholder="Água">
+  <input type="number" id="energia" placeholder="Energia">
+  <input type="number" id="gas" placeholder="Gás">
+  <input type="number" id="mercado" placeholder="Supermercado">
+  <input type="number" id="transporte" placeholder="Transporte">
+  <input type="number" id="lazer" placeholder="Lazer"><button onclick="calcular()">Analisar Finanças</button>
+
+  <div class="resultado" id="resultado"></div>
+  <canvas id="grafico"></canvas>
+</div><script>
+let chart;
+
+function pegarValor(id) {
+  return parseFloat(document.getElementById(id).value) || 0;
+}
+
+function calcular() {
+  let salario = pegarValor('salario');
+
+  let aluguel = pegarValor('aluguel');
+  let agua = pegarValor('agua');
+  let energia = pegarValor('energia');
+  let gas = pegarValor('gas');
+  let mercado = pegarValor('mercado');
+  let transporte = pegarValor('transporte');
+  let lazer = pegarValor('lazer');
+
+  if (salario <= 0) {
+    alert('Digite seu salário!');
+    return;
+  }
+
+  let necessidades = aluguel + agua + energia + gas + mercado + transporte;
+  let totalGastos = necessidades + lazer;
+  let saldo = salario - totalGastos;
+
+  let regraNecessidades = salario * 0.5;
+  let regraLazer = salario * 0.3;
+  let regraInvestimentos = salario * 0.2;
+
+  let dica = '';
+
+  if (totalGastos > salario) {
+    dica = '⚠️ Você está gastando mais do que ganha!';
+  } else if (necessidades > regraNecessidades) {
+    dica = '⚠️ Seus gastos essenciais estão acima do ideal (50%).';
+  } else if (lazer > regraLazer) {
+    dica = '⚠️ Seus gastos com lazer estão altos.';
+  } else {
+    dica = '✅ Ótimo controle financeiro!';
+  }
+
+  document.getElementById('resultado').innerHTML = `
+    <p><strong>Saldo:</strong> R$ ${saldo.toFixed(2)}</p>
+    <p>Necessidades: R$ ${necessidades.toFixed(2)}</p>
+    <p>Lazer: R$ ${lazer.toFixed(2)}</p>
+    <p>Investimentos sugeridos (20%): R$ ${regraInvestimentos.toFixed(2)}</p>
+    <p class="dica">${dica}</p>
+  `;
+
+  if (chart) chart.destroy();
+
+  const ctx = document.getElementById('grafico').getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Necessidades', 'Lazer', 'Investimentos'],
+      datasets: [{
+        data: [necessidades, lazer, regraInvestimentos]
+      }]
+    }
+  });
+}
+</script></body>
+</html>
