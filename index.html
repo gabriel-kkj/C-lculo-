@@ -1,3 +1,4 @@
+
 <!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -8,51 +9,93 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
-      color: white;
-    }
-    .container {
-      max-width: 420px;
-      margin: 30px auto;
-      background: rgba(255,255,255,0.1);
-      padding: 20px;
-      border-radius: 15px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-    h2 { text-align: center; }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 6px 0;
-      border-radius: 8px;
-      border: none;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 8px;
-      background: #00c9a7;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover { background: #00a78e; }
-    .resultado { margin-top: 15px; }
-    .dica { font-weight: bold; margin-top: 10px; }
+      background: #0f172a;
+      color: #e2e8f0;
+    }.container {
+  max-width: 450px;
+  margin: 40px auto;
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+p.subtitle {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+h4 {
+  margin-top: 20px;
+  margin-bottom: 5px;
+  color: #38bdf8;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 8px;
+  border: none;
+  background: #334155;
+  color: white;
+}
+
+input::placeholder {
+  color: #94a3b8;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  background: #38bdf8;
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #0ea5e9;
+}
+
+.resultado {
+  margin-top: 20px;
+  background: #020617;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.dica {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.positivo { color: #22c55e; }
+.negativo { color: #ef4444; }
+.neutro { color: #facc15; }
+
   </style>
 </head>
 <body><div class="container">
   <h2>💰 FinSmart Pro+</h2>
-  <p style="text-align:center;">Controle detalhado de gastos</p>  <input type="number" id="salario" placeholder="Seu salário (R$)">  <h4>💸 Gastos Mensais</h4>
+  <p class="subtitle">Planejamento financeiro inteligente</p>  <input type="number" id="salario" placeholder="Seu salário (R$)">  <h4>💸 Gastos Essenciais</h4>
   <input type="number" id="aluguel" placeholder="Aluguel">
   <input type="number" id="agua" placeholder="Água">
   <input type="number" id="energia" placeholder="Energia">
   <input type="number" id="gas" placeholder="Gás">
   <input type="number" id="mercado" placeholder="Supermercado">
-  <input type="number" id="transporte" placeholder="Transporte">
+  <input type="number" id="transporte" placeholder="Transporte">  <h4>🎯 Lazer</h4>
   <input type="number" id="lazer" placeholder="Lazer"><button onclick="calcular()">Analisar Finanças</button>
 
   <div class="resultado" id="resultado"></div>
@@ -80,32 +123,33 @@ function calcular() {
     return;
   }
 
-  let necessidades = aluguel + agua + energia + gas + mercado + transporte;
-  let totalGastos = necessidades + lazer;
-  let saldo = salario - totalGastos;
+  let essenciais = aluguel + agua + energia + gas + mercado + transporte;
+  let total = essenciais + lazer;
+  let saldo = salario - total;
 
-  let regraNecessidades = salario * 0.5;
-  let regraLazer = salario * 0.3;
-  let regraInvestimentos = salario * 0.2;
+  let limiteLazer = salario * 0.3;
+  let investimento = salario * 0.2;
 
   let dica = '';
+  let classe = 'neutro';
 
-  if (totalGastos > salario) {
-    dica = '⚠️ Você está gastando mais do que ganha!';
-  } else if (necessidades > regraNecessidades) {
-    dica = '⚠️ Seus gastos essenciais estão acima do ideal (50%).';
-  } else if (lazer > regraLazer) {
-    dica = '⚠️ Seus gastos com lazer estão altos.';
-  } else {
-    dica = '✅ Ótimo controle financeiro!';
+  if (total > salario) {
+    dica = '⚠️ Você está gastando mais do que ganha.';
+    classe = 'negativo';
+  } else if (lazer > limiteLazer) {
+    dica = '⚠️ Seus gastos com lazer estão acima do recomendado.';
+    classe = 'neutro';
+  } else if (saldo > 0) {
+    dica = '✅ Você está conseguindo manter um bom controle financeiro.';
+    classe = 'positivo';
   }
 
   document.getElementById('resultado').innerHTML = `
     <p><strong>Saldo:</strong> R$ ${saldo.toFixed(2)}</p>
-    <p>Necessidades: R$ ${necessidades.toFixed(2)}</p>
+    <p>Gastos Essenciais: R$ ${essenciais.toFixed(2)}</p>
     <p>Lazer: R$ ${lazer.toFixed(2)}</p>
-    <p>Investimentos sugeridos (20%): R$ ${regraInvestimentos.toFixed(2)}</p>
-    <p class="dica">${dica}</p>
+    <p>Investimento sugerido: R$ ${investimento.toFixed(2)}</p>
+    <p class="dica ${classe}">${dica}</p>
   `;
 
   if (chart) chart.destroy();
@@ -114,9 +158,9 @@ function calcular() {
   chart = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Necessidades', 'Lazer', 'Investimentos'],
+      labels: ['Essenciais', 'Lazer', 'Investimentos'],
       datasets: [{
-        data: [necessidades, lazer, regraInvestimentos]
+        data: [essenciais, lazer, investimento]
       }]
     }
   });
