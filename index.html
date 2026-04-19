@@ -1,69 +1,117 @@
 <!DOCTYPE html><html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>FinControl</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body { margin:0; font-family: Arial, sans-serif; background:#f5f5f5; color:#000; }
-    .container { max-width:450px; margin:40px auto; background:#fff; padding:25px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1);}    
-    h2 { text-align:center; margin-bottom:5px; }
-    p.subtitle { text-align:center; color:#555; font-size:14px; }
-    h4 { margin-top:20px; margin-bottom:5px; }
-    input { width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ccc; }
-    input::placeholder { color:#777; }
-    button { width:100%; padding:12px; margin-top:15px; border:none; border-radius:10px; background:#007bff; color:#fff; font-size:16px; font-weight:bold; cursor:pointer; }
-    button:hover { background:#0056b3; }
-    .resultado { margin-top:20px; background:#f0f0f0; padding:15px; border-radius:10px; }
-    .dica { margin-top:10px; font-weight:bold; }
-    .positivo { color:green; }
-    .negativo { color:red; }
-    .neutro { color:orange; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monexa</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body{margin:0;font-family:Segoe UI;background:#0f172a;color:#111}
+.container{max-width:520px;margin:20px auto;background:#ffffff;padding:20px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+h1{text-align:center;color:#0f172a}
+p{text-align:center;color:#555}
+input{width:100%;padding:10px;margin:5px 0;border-radius:8px;border:1px solid #ccc}
+button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-weight:bold;cursor:pointer}
+button:hover{background:#1d4ed8}
+.resultado{margin-top:15px;padding:15px;background:#f1f5f9;border-radius:10px}
+.dica{font-weight:bold;margin-top:10px}
+ul{padding-left:18px}
+</style>
 </head>
-<body><div class="container">
-  <h2>FinControl</h2>
-  <p class="subtitle">Gestão financeira simples e inteligente</p>  <input type="number" id="salario" placeholder="Seu salário (R$)">  <h4>Gastos Essenciais</h4>
-  <input type="number" id="aluguel" placeholder="Aluguel">
-  <input type="number" id="agua" placeholder="Água">
-  <input type="number" id="energia" placeholder="Energia">
-  <input type="number" id="mercado" placeholder="Supermercado">
-  <input type="number" id="transporte" placeholder="Transporte">  <h4>Lazer</h4>
-  <input type="number" id="lazer" placeholder="Lazer"><button onclick="calcular()">Analisar Finanças</button>
+<body>
+<div class="container">
+<h1>💎 Monexa</h1>
+<p>Inteligência financeira de verdade</p><input type="number" id="salario" placeholder="Seu salário (R$)"><h3>Gastos Essenciais</h3>
+<input type="number" id="aluguel" placeholder="Aluguel">
+<input type="number" id="agua" placeholder="Água">
+<input type="number" id="energia" placeholder="Energia">
+<input type="number" id="mercado" placeholder="Supermercado">
+<input type="number" id="transporte" placeholder="Transporte"><h3>Outros Gastos</h3>
+<input type="number" id="lazer" placeholder="Lazer">
+<input type="number" id="outros" placeholder="Outros gastos"><button onclick="calcular()">Analisar Minha Vida Financeira</button>
 
-  <div class="resultado" id="resultado"></div>
-  <canvas id="grafico"></canvas>
+<div class="resultado" id="resultado"></div>
+<canvas id="grafico"></canvas>
 </div><script>
 let chart;
-function pegarValor(id){ return parseFloat(document.getElementById(id).value)||0; }
+function v(id){return parseFloat(document.getElementById(id).value)||0}
+
 function calcular(){
-  let salario=pegarValor('salario');
-  let aluguel=pegarValor('aluguel');
-  let agua=pegarValor('agua');
-  let energia=pegarValor('energia');
-  let mercado=pegarValor('mercado');
-  let transporte=pegarValor('transporte');
-  let lazer=pegarValor('lazer');
-  if(salario<=0){ alert('Digite seu salário!'); return; }
-  let essenciais=aluguel+agua+energia+mercado+transporte;
-  let total=essenciais+lazer;
-  let saldo=salario-total;
-  let limiteLazer=salario*0.3;
-  let investimento=salario*0.2;
-  let dica=''; let classe='neutro';
-  if(total>salario){ dica='Você está gastando mais do que ganha.'; classe='negativo'; }
-  else if(lazer>limiteLazer){ dica='Seus gastos com lazer estão acima do recomendado.'; classe='neutro'; }
-  else if(saldo>0){ dica='Você está com um bom controle financeiro.'; classe='positivo'; }
-  document.getElementById('resultado').innerHTML=`
-    <p><strong>Saldo:</strong> R$ ${saldo.toFixed(2)}</p>
-    <p>Gastos Essenciais: R$ ${essenciais.toFixed(2)}</p>
-    <p>Lazer: R$ ${lazer.toFixed(2)}</p>
-    <p>Investimento sugerido: R$ ${investimento.toFixed(2)}</p>
-    <p class="dica ${classe}">${dica}</p>
-  `;
-  if(chart) chart.destroy();
-  const ctx=document.getElementById('grafico').getContext('2d');
-  chart=new Chart(ctx,{ type:'doughnut', data:{ labels:['Essenciais','Lazer','Investimentos'], datasets:[{ data:[essenciais,lazer,investimento]}] }});
+let salario=v('salario');
+let aluguel=v('aluguel');
+let agua=v('agua');
+let energia=v('energia');
+let mercado=v('mercado');
+let transporte=v('transporte');
+let lazer=v('lazer');
+let outros=v('outros');
+
+if(salario<=0){alert('Digite seu salário');return}
+
+let essenciais=aluguel+agua+energia+mercado+transporte;
+let variaveis=lazer+outros;
+let total=essenciais+variaveis;
+let saldo=salario-total;
+
+let investimentoIdeal=salario*0.2;
+let investimentoReal=Math.max(0,Math.min(saldo,investimentoIdeal));
+
+let nivel='';
+let dicas=[];
+
+if(total>salario){
+ nivel='🔴 Situação crítica';
+ dicas.push('Corte gastos urgentes');
+ dicas.push('Evite parcelamentos');
+ dicas.push('Busque renda extra');
+}
+else if(saldo<100){
+ nivel='🟡 Atenção financeira';
+ dicas.push('Reduza gastos variáveis');
+ dicas.push('Evite compras impulsivas');
+}
+else{
+ nivel='🟢 Situação saudável';
+ dicas.push('Crie reserva de emergência');
+ dicas.push('Invista regularmente');
+ dicas.push('Pense em aumentar patrimônio');
+}
+
+let porcentEssenciais=(essenciais/salario)*100;
+let porcentLazer=(variaveis/salario)*100;
+
+let analiseAvancada=`
+<p><strong>Nível financeiro:</strong> ${nivel}</p>
+<p>Você gasta ${porcentEssenciais.toFixed(1)}% com essenciais</p>
+<p>Você gasta ${porcentLazer.toFixed(1)}% com lazer/outros</p>
+`;
+
+if(porcentEssenciais>70){
+ dicas.push('Seu custo de vida está alto, reveja moradia ou contas');
+}
+
+if(porcentLazer>30){
+ dicas.push('Seu lazer está acima do ideal');
+}
+
+let html=`
+<p><strong>Saldo:</strong> R$ ${saldo.toFixed(2)}</p>
+<p><strong>Total gasto:</strong> R$ ${total.toFixed(2)}</p>
+<p>Investimento possível: R$ ${investimentoReal.toFixed(2)}</p>
+${analiseAvancada}
+<ul>${dicas.map(d=>`<li>${d}</li>`).join('')}</ul>
+`;
+
+document.getElementById('resultado').innerHTML=html;
+
+if(chart)chart.destroy();
+let ctx=document.getElementById('grafico').getContext('2d');
+chart=new Chart(ctx,{
+ type:'doughnut',
+ data:{
+ labels:['Essenciais','Variáveis','Investimento'],
+ datasets:[{data:[essenciais,variaveis,investimentoReal]}]
+ }
+});
 }
 </script></body>
 </html>
