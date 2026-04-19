@@ -52,51 +52,51 @@ let variaveis=lazer+outros;
 let total=essenciais+variaveis;
 let saldo=salario-total;
 
-let investimentoIdeal=salario*0.2;
-let investimentoReal=Math.max(0,Math.min(saldo,investimentoIdeal));
+let investimentoReal = saldo > 0 ? saldo * 0.3 : 0; // agora baseado no que sobra
 
 let nivel='';
 let dicas=[];
 
 if(total>salario){
  nivel='🔴 Situação crítica';
- dicas.push('Corte gastos urgentes');
- dicas.push('Evite parcelamentos');
- dicas.push('Busque renda extra');
+ dicas.push('Você precisa reduzir gastos imediatamente');
+ dicas.push('Corte gastos variáveis primeiro');
+ dicas.push('Evite parcelamentos e dívidas');
 }
-else if(saldo<100){
+else if(saldo<200){
  nivel='🟡 Atenção financeira';
- dicas.push('Reduza gastos variáveis');
- dicas.push('Evite compras impulsivas');
+ dicas.push('Seu dinheiro está no limite');
+ dicas.push('Reduza gastos não essenciais');
+ dicas.push('Tente guardar pelo menos uma pequena quantia');
 }
 else{
  nivel='🟢 Situação saudável';
- dicas.push('Crie reserva de emergência');
- dicas.push('Invista regularmente');
- dicas.push('Pense em aumentar patrimônio');
+ dicas.push('Você está conseguindo poupar dinheiro');
+ dicas.push('Considere investir parte do que sobra');
+ dicas.push('Pense em aumentar sua renda ou investir melhor');
 }
 
 let porcentEssenciais=(essenciais/salario)*100;
-let porcentLazer=(variaveis/salario)*100;
+let porcentVariaveis=(variaveis/salario)*100;
 
 let analiseAvancada=`
 <p><strong>Nível financeiro:</strong> ${nivel}</p>
-<p>Você gasta ${porcentEssenciais.toFixed(1)}% com essenciais</p>
-<p>Você gasta ${porcentLazer.toFixed(1)}% com lazer/outros</p>
+<p>Essenciais: ${porcentEssenciais.toFixed(1)}%</p>
+<p>Variáveis: ${porcentVariaveis.toFixed(1)}%</p>
 `;
 
 if(porcentEssenciais>70){
- dicas.push('Seu custo de vida está alto, reveja moradia ou contas');
+ dicas.push('Seu custo de vida está muito alto');
 }
 
-if(porcentLazer>30){
- dicas.push('Seu lazer está acima do ideal');
+if(porcentVariaveis>40){
+ dicas.push('Você está gastando muito com lazer/outros');
 }
 
 let html=`
 <p><strong>Saldo:</strong> R$ ${saldo.toFixed(2)}</p>
 <p><strong>Total gasto:</strong> R$ ${total.toFixed(2)}</p>
-<p>Investimento possível: R$ ${investimentoReal.toFixed(2)}</p>
+<p>Possível valor para guardar/investir: R$ ${investimentoReal.toFixed(2)}</p>
 ${analiseAvancada}
 <ul>${dicas.map(d=>`<li>${d}</li>`).join('')}</ul>
 `;
@@ -108,7 +108,7 @@ let ctx=document.getElementById('grafico').getContext('2d');
 chart=new Chart(ctx,{
  type:'doughnut',
  data:{
- labels:['Essenciais','Variáveis','Investimento'],
+ labels:['Essenciais','Variáveis','Guardar'],
  datasets:[{data:[essenciais,variaveis,investimentoReal]}]
  }
 });
