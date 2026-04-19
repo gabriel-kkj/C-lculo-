@@ -15,12 +15,13 @@ button:hover{background:#1d4ed8}
 .resultado{margin-top:15px;padding:15px;background:#f1f5f9;border-radius:10px}
 .dica{font-weight:bold;margin-top:10px}
 ul{padding-left:18px}
+.extra{margin-top:10px;font-size:14px;color:#333}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>💎 Monexa</h1>
-<p>Inteligência financeira de verdade</p><input type="number" id="salario" placeholder="Seu salário (R$)"><h3>Gastos Essenciais</h3>
+<p>Seu assistente financeiro inteligente</p><input type="number" id="salario" placeholder="Seu salário (R$)"><h3>Gastos Essenciais</h3>
 <input type="number" id="aluguel" placeholder="Aluguel">
 <input type="number" id="agua" placeholder="Água">
 <input type="number" id="energia" placeholder="Energia">
@@ -52,52 +53,53 @@ let variaveis=lazer+outros;
 let total=essenciais+variaveis;
 let saldo=salario-total;
 
-let investimentoReal = saldo > 0 ? saldo * 0.3 : 0; // agora baseado no que sobra
+let guardar = saldo > 0 ? saldo * 0.3 : 0;
+let reservaEmergencia = salario * 6; // meta padrão (6 meses)
 
-let nivel='';
 let dicas=[];
+let nivel='';
 
 if(total>salario){
- nivel='🔴 Situação crítica';
- dicas.push('Você precisa reduzir gastos imediatamente');
- dicas.push('Corte gastos variáveis primeiro');
- dicas.push('Evite parcelamentos e dívidas');
+ nivel='🔴 Crítico';
+ dicas.push('Você está gastando mais do que ganha');
+ dicas.push('Corte gastos variáveis imediatamente');
+ dicas.push('Evite dívidas e parcelamentos');
 }
 else if(saldo<200){
- nivel='🟡 Atenção financeira';
- dicas.push('Seu dinheiro está no limite');
- dicas.push('Reduza gastos não essenciais');
- dicas.push('Tente guardar pelo menos uma pequena quantia');
+ nivel='🟡 Atenção';
+ dicas.push('Seu dinheiro está muito apertado');
+ dicas.push('Revise gastos pequenos (efeito formiguinha)');
 }
 else{
- nivel='🟢 Situação saudável';
- dicas.push('Você está conseguindo poupar dinheiro');
- dicas.push('Considere investir parte do que sobra');
- dicas.push('Pense em aumentar sua renda ou investir melhor');
+ nivel='🟢 Saudável';
+ dicas.push('Você está com controle financeiro');
+ dicas.push('Comece a investir regularmente');
+ dicas.push('Monte uma reserva de emergência');
 }
 
 let porcentEssenciais=(essenciais/salario)*100;
 let porcentVariaveis=(variaveis/salario)*100;
 
-let analiseAvancada=`
-<p><strong>Nível financeiro:</strong> ${nivel}</p>
-<p>Essenciais: ${porcentEssenciais.toFixed(1)}%</p>
-<p>Variáveis: ${porcentVariaveis.toFixed(1)}%</p>
-`;
-
 if(porcentEssenciais>70){
- dicas.push('Seu custo de vida está muito alto');
+ dicas.push('Seu custo de vida está alto (moradia, contas, etc)');
 }
-
 if(porcentVariaveis>40){
- dicas.push('Você está gastando muito com lazer/outros');
+ dicas.push('Gastos variáveis elevados (lazer/compras)');
 }
 
 let html=`
 <p><strong>Saldo:</strong> R$ ${saldo.toFixed(2)}</p>
 <p><strong>Total gasto:</strong> R$ ${total.toFixed(2)}</p>
-<p>Possível valor para guardar/investir: R$ ${investimentoReal.toFixed(2)}</p>
-${analiseAvancada}
+<p><strong>Nível:</strong> ${nivel}</p>
+<p>Essenciais: ${porcentEssenciais.toFixed(1)}%</p>
+<p>Variáveis: ${porcentVariaveis.toFixed(1)}%</p>
+<p><strong>Valor sugerido para guardar:</strong> R$ ${guardar.toFixed(2)}</p>
+
+<div class="extra">
+<p><strong>💡 Reserva de emergência ideal:</strong> R$ ${reservaEmergencia.toFixed(2)}</p>
+<p>Baseado em 6 meses do seu salário</p>
+</div>
+
 <ul>${dicas.map(d=>`<li>${d}</li>`).join('')}</ul>
 `;
 
@@ -109,7 +111,7 @@ chart=new Chart(ctx,{
  type:'doughnut',
  data:{
  labels:['Essenciais','Variáveis','Guardar'],
- datasets:[{data:[essenciais,variaveis,investimentoReal]}]
+ datasets:[{data:[essenciais,variaveis,guardar]}]
  }
 });
 }
