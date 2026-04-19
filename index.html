@@ -2,93 +2,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Monexa Pro</title>
+<title>Monexa Pro X</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body{margin:0;font-family:Segoe UI;background:#0f172a}
-.container{max-width:550px;margin:20px auto;background:#fff;padding:20px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+.container{max-width:560px;margin:20px auto;background:#fff;padding:20px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
 h1{text-align:center}
 input{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #ccc}
 button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-weight:bold;cursor:pointer}
+.small-btn{background:#10b981;margin-top:5px}
 .resultado{margin-top:15px;padding:15px;background:#f1f5f9;border-radius:10px}
 ul{padding-left:18px}
+.item{display:flex;gap:5px}
+.item input{flex:1}
 </style>
 </head>
 <body>
 <div class="container">
-<h1>💎 Monexa Pro</h1>
-<p style="text-align:center">Sistema financeiro inteligente</p><input type="number" id="salario" placeholder="Salário principal">
+<h1>💎 Monexa Pro X</h1>
+<p style="text-align:center">Sistema financeiro inteligente avançado</p><input type="number" id="salario" placeholder="Salário">
 <input type="number" id="extra" placeholder="Renda extra"><h3>Despesas</h3>
-<input type="number" id="moradia" placeholder="Moradia">
-<input type="number" id="alimentacao" placeholder="Alimentação">
-<input type="number" id="transporte" placeholder="Transporte">
-<input type="number" id="lazer" placeholder="Lazer">
-<input type="number" id="outros" placeholder="Outros"><h3>Meta</h3>
-<input type="number" id="meta" placeholder="Quanto quer juntar (R$)"><button onclick="calcular()">Analisar</button>
+<div id="listaGastos"></div>
+<button class="small-btn" onclick="addGasto()">+ Adicionar gasto</button><h3>Meta</h3>
+<input type="number" id="meta" placeholder="Quanto quer juntar"><button onclick="calcular()">Analisar</button>
 
 <div class="resultado" id="resultado"></div>
 <canvas id="grafico"></canvas>
 </div><script>
 let chart;
+let gastos=[];
+
+function addGasto(nome='',valor=''){
+  gastos.push({nome,valor});
+  render();
+}
+
+function render(){
+  let div=document.getElementById('listaGastos');
+  div.innerHTML='';
+  gastos.forEach((g,i)=>{
+    div.innerHTML+=`<div class='item'>
+      <input placeholder='Categoria' value='${g.nome}' onchange='gastos[${i}].nome=this.value'>
+      <input type='number' placeholder='Valor' value='${g.valor}' onchange='gastos[${i}].valor=this.value'>
+    </div>`;
+  });
+}
+
 function v(id){return parseFloat(document.getElementById(id).value)||0}
 
 function calcular(){
-let salario=v('salario');
-let extra=v('extra');
-let renda=salario+extra;
+let renda=v('salario')+v('extra');
+if(renda<=0){alert('Digite renda');return}
 
-let moradia=v('moradia');
-let alimentacao=v('alimentacao');
-let transporte=v('transporte');
-let lazer=v('lazer');
-let outros=v('outros');
-let meta=v('meta');
+let total=0;
+let labels=[];
+let valores=[];
 
-if(renda<=0){alert('Digite sua renda');return}
+gastos.forEach(g=>{
+ let val=parseFloat(g.valor)||0;
+ total+=val;
+ labels.push(g.nome||'Outro');
+ valores.push(val);
+});
 
-let total=moradia+alimentacao+transporte+lazer+outros;
 let saldo=renda-total;
-let guardar = saldo>0 ? saldo*0.3 : 0;
+let guardar=saldo>0?saldo*0.3:0;
+let meta=v('meta');
+let meses=meta>0&&guardar>0?(meta/guardar).toFixed(1):0;
 
-let mesesMeta = meta>0 && guardar>0 ? (meta/guardar).toFixed(1) : 0;
+let previsao12=guardar*12;
 
-let nivel='';
 let dicas=[];
-
-if(total>renda){
- nivel='🔴 Crítico';
- dicas.push('Você gasta mais do que ganha');
- dicas.push('Corte gastos urgentes');
-}
-else if(saldo<200){
- nivel='🟡 Atenção';
- dicas.push('Seu saldo está baixo');
- dicas.push('Reduza gastos variáveis');
-}
-else{
- nivel='🟢 Saudável';
- dicas.push('Boa gestão financeira');
- dicas.push('Invista e aumente patrimônio');
-}
-
-let porcentMoradia=(moradia/renda)*100;
-if(porcentMoradia>40){dicas.push('Moradia está muito alta');}
-
-let previsao6 = guardar*6;
-let previsao12 = guardar*12;
+if(total>renda){dicas.push('Você está no prejuízo');}
+if(saldo<200){dicas.push('Saldo muito baixo');}
+if(guardar>0){dicas.push('Você pode começar a investir');}
 
 let html=`
-<p><strong>Renda total:</strong> R$ ${renda.toFixed(2)}</p>
+<p><strong>Renda:</strong> R$ ${renda.toFixed(2)}</p>
 <p><strong>Gastos:</strong> R$ ${total.toFixed(2)}</p>
 <p><strong>Saldo:</strong> R$ ${saldo.toFixed(2)}</p>
-<p><strong>Nível:</strong> ${nivel}</p>
-
-<p><strong>Você pode guardar:</strong> R$ ${guardar.toFixed(2)}</p>
-<p>Em 6 meses: R$ ${previsao6.toFixed(2)}</p>
-<p>Em 12 meses: R$ ${previsao12.toFixed(2)}</p>
-
-${meta>0 ? `<p><strong>Meta:</strong> R$ ${meta} → ${mesesMeta} meses</p>`:''}
-
+<p><strong>Guardar:</strong> R$ ${guardar.toFixed(2)}</p>
+<p><strong>Em 12 meses:</strong> R$ ${previsao12.toFixed(2)}</p>
+${meta>0?`<p><strong>Meta:</strong> ${meses} meses</p>`:''}
 <ul>${dicas.map(d=>`<li>${d}</li>`).join('')}</ul>
 `;
 
@@ -96,13 +91,23 @@ document.getElementById('resultado').innerHTML=html;
 
 if(chart)chart.destroy();
 let ctx=document.getElementById('grafico').getContext('2d');
-chart=new Chart(ctx,{
- type:'doughnut',
- data:{
- labels:['Moradia','Alimentação','Transporte','Lazer','Outros','Guardar'],
- datasets:[{data:[moradia,alimentacao,transporte,lazer,outros,guardar]}]
- }
-});
+chart=new Chart(ctx,{type:'doughnut',data:{labels:[...labels,'Guardar'],datasets:[{data:[...valores,guardar]}]}});
+
+localStorage.setItem('dados',JSON.stringify({renda,gastos,meta}));
 }
+
+function carregar(){
+let data=JSON.parse(localStorage.getItem('dados'));
+if(data){
+ document.getElementById('salario').value=data.renda;
+ gastos=data.gastos||[];
+ document.getElementById('meta').value=data.meta;
+ render();
+}
+}
+
+addGasto('Moradia','');
+addGasto('Alimentação','');
+carregar();
 </script></body>
 </html>
